@@ -2,7 +2,6 @@ import math
 import datetime
 import torch
 from torch.autograd import Variable
-# torch.autograd.Variable是Autograd的核心类，它封装了Tensor，并整合了反向传播的相关实现
 from torch.optim import SGD, Adam
 from torch.utils.data import DataLoader
 from torch.nn.functional import softmax
@@ -37,11 +36,11 @@ class ReMIT:
         self.lambdas = args.lambdas
 
         self.data = ReMITDataSet(args, self.file_path, self.neg_size, self.hist_len, self.feature_path, args.directed)
-        self.node_dim = self.data.get_node_dim()  # 在HTNEDataSet中有定义，即得到节点数量
+        self.node_dim = self.data.get_node_dim()
         self.edge_num = self.data.get_edge_num()
         self.feature = self.data.get_feature()
 
-        if torch.cuda.is_available():  # 有GPU就用GPU，没有就跑CPU
+        if torch.cuda.is_available(): 
             with torch.cuda.device(DID):
                 '''
                 position_emb = ReMIT.position_encoding_(self, self.node_list, self.emb_size)
@@ -65,9 +64,7 @@ class ReMIT:
                 self.v = 1.0
 
         self.opt = SGD(lr=args.learning_rate, params=[self.node_emb, self.global_emb, self.delta, self.lambda_g, self.cluster_layer])
-        # torch.optim方法优化神经网络，SGD是最基础的优化方法，需要重复不断的把整套数据放入神经网络NN中训练
         self.loss = torch.FloatTensor()
-        # 即损失函数也设为浮点型张量
 
     def kl_loss(self, z, p):
         q = 1.0 / (1.0 + torch.sum(torch.pow(z.unsqueeze(1) - self.cluster_layer, 2), 2) / self.v)
@@ -157,11 +154,6 @@ class ReMIT:
                 self.save_node_embeddings(self.emb_path % (self.the_data, self.the_data, epoch))
             if epoch % self.save_step == 0 and epoch != 0:
                 self.save_node_embeddings(self.emb_path % (self.the_data, self.the_data, epoch))
-                '''
-                此句为作者备注：# torch.save(self, './model/dnrl-dblp-%d.bin' % epoch)
-                每次只要epoch执行未结束，都保存一下生成的嵌入
-                路径方面："./"代表目前所在的目录；" ../"代表上一层目录；"/"代表根目录
-                '''
             for i_batch, sample_batched in enumerate(loader):
                 if i_batch != 0:
                     sys.stdout.write('\r' + str(i_batch * self.batch) + '\tloss: ' + str(
@@ -187,10 +179,6 @@ class ReMIT:
                                 sample_batched['history_masks'].type(FType))
 
             sys.stdout.write('\repoch %d: loss=%.4f\n' % (epoch, (self.loss.cpu().numpy() / len(self.data))))
-            # torch.cuda.memory_summary(device=0, abbreviated=False)
-            # print(f"当前GPU显存已分配: {torch.cuda.memory_allocated(device=0) / 1024**2:.2f} MB")
-            # print(f"峰值GPU显存已分配: {torch.cuda.max_memory_allocated(device=0) / 1024**2:.2f} MB")
-
             # end = datetime.datetime.now()
             # print('Training Complete with Time: %s' % str(end - start))
 
