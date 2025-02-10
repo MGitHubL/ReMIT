@@ -2,7 +2,7 @@
 
 This is a demo version and will be updated later.
 
-#### Train and Test
+### Train and Test
 
 Training and testing are separate and can be implemented in "main.py".
 
@@ -10,7 +10,7 @@ You can also use "test.py" for single testing.
 
 To store the final embeddings, floder "emb/bitotc" needed to be created in the same directory as "code" or "data".
 
-#### Datasets
+### Datasets
 
 The datasets used are all publicly available online, and we provide bitotc as an example.
 
