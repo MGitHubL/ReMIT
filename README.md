@@ -7,3 +7,5 @@ Training and testing are separate and can be implemented in "main.py".
 You can also use "test.py" for single test.
 
 To store the final embeddings, floder "emb/bitotc" needed to be created in the same directory as "code" or "data".
+
+If you find some problems, please feel free to contact me: mengliuedu@163.com
